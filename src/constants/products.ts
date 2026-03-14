@@ -32,14 +32,14 @@ export const PRODUTOS: Produto[] = [
   },
   {
     id: 'caneca-alavanca-aluminio',
-    nome: 'Caneca Alavanca Alumínio',
-    preco: 35.00,
+    nome: 'Caneca e Tirante Alavanca ',
+    preco: 15.00,
     imagem: '/produtos/caneca.png',
     tipo: 'acessorio',
-    descricao: 'Caneca de alumínio 500ml com estampa resistente. Ideal para eventos e uso diário.',
+    descricao: 'Caneca de alumínio 700ml e tirante com estampas Alavanca personalizas. Ideal para eventos e uso diário.',
     opcoes: [
-      { label: 'Caneca', preco: 35.00 },
       { label: 'Tirante', preco: 15.00 },
+      { label: 'Caneca', preco: 35.00 },     
       { label: 'Caneca + Tirante', preco: 45.00 }
     ]
   }
