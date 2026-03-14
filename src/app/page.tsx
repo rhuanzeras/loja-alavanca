@@ -1,65 +1,73 @@
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
+
+// Simulando nossos produtos com foco esportivo e premiações
+const produtos = [
+  { id: 1, nome: 'Camisa de Futebol Oficial', preco: 'R$ 149,90', categoria: 'FUTEBOL' },
+  { id: 2, nome: 'Troféu em Acrílico - 1º Lugar', preco: 'R$ 89,90', categoria: 'PREMIAÇÃO' },
+  { id: 3, nome: 'Medalha de Xadrez Premium', preco: 'R$ 25,00', categoria: 'JOGOS' },
+  { id: 4, nome: 'Camisa Vôlei Minimalista', preco: 'R$ 79,90', categoria: 'VÔLEI' },
+];
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    // Colocamos o text-orange-500 aqui para que todo o texto do site puxe o laranja por padrão
+    <main className="min-h-screen bg-black text-orange-500 font-sans">
+      
+     
+
+      {/* Hero Section */}
+      <header className="relative w-full h-[70vh] bg-zinc-950 flex flex-col items-center justify-center text-center p-8 border-b border-zinc-900">
+        <div className="z-10 flex flex-col items-center">
+          <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter mb-4 leading-none">
+            Domine o <br/> Jogo
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-lg opacity-80 mb-10 max-w-2xl font-medium">
+            Venha mostrar que você é um verdadeiro fã da atlética que mais vence.
           </p>
+          
+          {/* BOTÃO BRANCO COM TEXTO LARANJA */}
+          <Link href="#produtos" className="bg-white text-orange-500 font-black uppercase tracking-widest py-4 px-10 hover:bg-gray-200 transition-all hover:scale-105 duration-200">
+            Comprar Agora
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      {/* Seção de Produtos */}
+      <section id="produtos" className="max-w-[1400px] mx-auto px-8 py-20">
+        <div className="flex justify-between items-end mb-12">
+          <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">
+            Destaques
+          </h2>
+          <Link href="#" className="text-sm font-bold underline hover:text-white transition hidden md:block uppercase tracking-wider">
+            Ver tudo
+          </Link>
         </div>
-      </main>
-    </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+          {produtos.map((produto) => (
+            <div key={produto.id} className="group cursor-pointer flex flex-col">
+              <div className="w-full aspect-square bg-zinc-900 flex items-center justify-center text-zinc-800 text-6xl group-hover:bg-zinc-800 transition-colors duration-300 relative overflow-hidden">
+                 
+                 {/* ETIQUETA BRANCA COM TEXTO LARANJA */}
+                 <span className="absolute top-4 left-4 text-xs font-bold uppercase tracking-widest bg-white text-orange-500 px-3 py-1 z-10">
+                    {produto.categoria}
+                 </span>
+                 
+                 <span className="group-hover:scale-110 transition-transform duration-500">IMG</span>
+              </div>
+              
+              <div className="pt-5 pb-6">
+                <h3 className="text-lg font-bold group-hover:text-white transition-colors mb-1 uppercase tracking-tight">
+                  {produto.nome}
+                </h3>
+                <p className="font-medium text-lg opacity-90">{produto.preco}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      
+    </main>
   );
 }
