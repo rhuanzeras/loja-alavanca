@@ -1,73 +1,79 @@
 import Link from 'next/link';
-import Image from 'next/image';
-
-// Simulando nossos produtos com foco esportivo e premiações
-const produtos = [
-  { id: 1, nome: 'Camisa de Futebol Oficial', preco: 'R$ 149,90', categoria: 'FUTEBOL' },
-  { id: 2, nome: 'Troféu em Acrílico - 1º Lugar', preco: 'R$ 89,90', categoria: 'PREMIAÇÃO' },
-  { id: 3, nome: 'Medalha de Xadrez Premium', preco: 'R$ 25,00', categoria: 'JOGOS' },
-  { id: 4, nome: 'Camisa Vôlei Minimalista', preco: 'R$ 79,90', categoria: 'VÔLEI' },
-];
+import { PRODUTOS } from '@/constants/products';
 
 export default function Home() {
   return (
-    // Colocamos o text-orange-500 aqui para que todo o texto do site puxe o laranja por padrão
-    <main className="min-h-screen bg-black text-orange-500 font-sans">
-      
-     
+    <main className="bg-black min-h-screen">
+      {/* BANNER ESTILO ADIDAS */}
+      <section className="relative h-[90vh] w-full flex items-center justify-start overflow-hidden">
+        {/* Imagem de Fundo - Substitua pelo caminho da sua foto de modelo ou ação */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/hero-banner.jpg" 
+            alt="Alavanca Training" 
+            className="w-full h-full object-cover opacity-60"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent" />
+        </div>
 
-      {/* Hero Section */}
-      <header className="relative w-full h-[70vh] bg-zinc-950 flex flex-col items-center justify-center text-center p-8 border-b border-zinc-900">
-        <div className="z-10 flex flex-col items-center">
-          <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter mb-4 leading-none">
-            Domine o <br/> Jogo
+        {/* Conteúdo do Banner */}
+        <div className="relative z-10 px-8 md:px-20 max-w-4xl">
+          <h1 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter text-white leading-none">
+            ELEVE O SEU <br />
+            <span className="text-orange-500">POTENCIAL</span>
           </h1>
-          <p className="text-lg opacity-80 mb-10 max-w-2xl font-medium">
-            Venha mostrar que você é um verdadeiro fã da atlética que mais vence.
+          <p className="mt-6 text-xl md:text-2xl text-zinc-300 font-medium uppercase tracking-wide max-w-lg">
+            Equipamentos de alta performance para quem vive a Educação Física.
           </p>
           
-          {/* BOTÃO BRANCO COM TEXTO LARANJA */}
-          <Link href="#produtos" className="bg-white text-orange-500 font-black uppercase tracking-widest py-4 px-10 hover:bg-gray-200 transition-all hover:scale-105 duration-200">
-            Comprar Agora
-          </Link>
+          <div className="mt-10">
+            <Link 
+              href="#produtos" 
+              className="bg-white text-black text-xl font-black uppercase px-12 py-5 hover:bg-orange-500 hover:text-white transition-all duration-300 inline-block"
+            >
+              Compre Agora
+            </Link>
+          </div>
         </div>
-      </header>
+      </section>
 
-      {/* Seção de Produtos */}
-      <section id="produtos" className="max-w-[1400px] mx-auto px-8 py-20">
-        <div className="flex justify-between items-end mb-12">
-          <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">
-            Destaques
-          </h2>
-          <Link href="#" className="text-sm font-bold underline hover:text-white transition hidden md:block uppercase tracking-wider">
-            Ver tudo
-          </Link>
-        </div>
+      {/* GRADE DE PRODUTOS */}
+      <section id="produtos" className="py-20 px-8 max-w-7xl mx-auto">
+        <h2 className="text-4xl font-black uppercase italic text-white mb-12 border-l-8 border-orange-500 pl-4">
+          Lançamentos
+        </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-          {produtos.map((produto) => (
-            <div key={produto.id} className="group cursor-pointer flex flex-col">
-              <div className="w-full aspect-square bg-zinc-900 flex items-center justify-center text-zinc-800 text-6xl group-hover:bg-zinc-800 transition-colors duration-300 relative overflow-hidden">
-                 
-                 {/* ETIQUETA BRANCA COM TEXTO LARANJA */}
-                 <span className="absolute top-4 left-4 text-xs font-bold uppercase tracking-widest bg-white text-orange-500 px-3 py-1 z-10">
-                    {produto.categoria}
-                 </span>
-                 
-                 <span className="group-hover:scale-110 transition-transform duration-500">IMG</span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {PRODUTOS.map((produto) => (
+            <Link 
+              key={produto.id} 
+              href={`/produto/${produto.id}`}
+              className="group bg-zinc-950 border border-zinc-900 p-2 hover:border-orange-500 transition-all duration-500"
+            >
+              <div className="aspect-[3/4] relative overflow-hidden bg-zinc-900">
+                <img 
+                  src={produto.imagem} 
+                  alt={produto.nome}
+                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
+                />
+                {/* Badge de Preço Flutuante */}
+                <div className="absolute bottom-4 left-4 bg-black px-3 py-1">
+                  <p className="text-white font-bold text-lg">
+                    R$ {produto.preco.toFixed(2).replace('.', ',')}
+                  </p>
+                </div>
               </div>
-              
-              <div className="pt-5 pb-6">
-                <h3 className="text-lg font-bold group-hover:text-white transition-colors mb-1 uppercase tracking-tight">
+
+              <div className="p-4">
+                <h3 className="text-zinc-100 font-bold uppercase text-lg group-hover:text-orange-500 transition-colors">
                   {produto.nome}
                 </h3>
-                <p className="font-medium text-lg opacity-90">{produto.preco}</p>
+                <p className="text-zinc-500 text-sm mt-1 uppercase tracking-widest">Ver detalhes —&gt;</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
-      
     </main>
   );
 }

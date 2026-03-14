@@ -1,135 +1,104 @@
-"use client"; // Diz ao Next.js que esta página tem interatividade (botões, inputs)
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useCartStore } from '@/store/cartStore'; // <-- Importação do nosso carrinho global
+import { use, useState, useEffect } from "react";
+import { PRODUTOS } from '@/constants/products';
+import { useCartStore } from '@/store/cartStore';
 
-export default function ProdutoDetalhes() {
-  // Guardando as escolhas do cliente
-  const [tamanho, setTamanho] = useState('');
-  const [nomePersonalizado, setNomePersonalizado] = useState('');
-  const [numeroPersonalizado, setNumeroPersonalizado] = useState('');
+export default function PaginaProduto({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
+  const produto = PRODUTOS.find(p => p.id === resolvedParams.id);
+  const adicionarAoCarrinho = useCartStore((state) => state.adicionarItem);
 
-  // Puxando a função de adicionar da nossa "memória global"
-  const adicionarItem = useCartStore((state) => state.adicionarItem);
+  // ESTADOS GERAIS
+  const [tamanho, setTamanho] = useState('G');
+  const [nome, setNome] = useState('');
+  const [numero, setNumero] = useState('');
+  const [opcaoSelecionada, setOpcaoSelecionada] = useState(produto?.opcoes ? produto.opcoes[0] : null);
 
-  // Função para adicionar ao carrinho real
-  const adicionarAoCarrinho = () => {
-    if (!tamanho) {
-      alert("Por favor, selecione um tamanho!");
-      return;
-    }
-    
-    // Dispara o item para a memória global do Zustand
-    adicionarItem({
-      id: Date.now().toString(), // Gera um ID único baseado na data/hora
-      nome: 'Camisa de Futebol Oficial',
-      preco: 149.90,
-      tamanho,
-      nomePersonalizado: nomePersonalizado || 'Sem nome',
-      numeroPersonalizado: numeroPersonalizado || 'Sem número',
-      quantidade: 1
-    });
-    
-    alert("Produto adicionado ao carrinho da Alavanca!");
-  };
+  if (!produto) return <div className="text-white p-8">Produto não encontrado.</div>;
+
+  const precoFinal = opcaoSelecionada ? opcaoSelecionada.preco : produto.preco;
 
   return (
-    <main className="min-h-screen bg-black text-orange-500 font-sans pb-20">
-      
-      {/* Navegação Simples (Voltar) */}
-      <nav className="p-8 border-b border-zinc-900">
-        <Link href="/" className="text-sm font-bold uppercase tracking-widest hover:text-white transition flex items-center gap-2">
-          <span>← Voltar para a loja</span>
-        </Link>
-      </nav>
+    <main className="min-h-screen bg-black text-white p-8 flex flex-col md:flex-row gap-12 items-center justify-center">
+      <div className="w-full max-w-md">
+        <img src={produto.imagem} alt={produto.nome} className="w-full border border-zinc-900 shadow-2xl" />
+      </div>
 
-      <div className="max-w-[1200px] mx-auto px-8 py-12 flex flex-col md:flex-row gap-12">
-        
-        {/* LADO ESQUERDO: Imagem do Produto */}
-        <div className="w-full md:w-1/2">
-          <div className="w-full aspect-[4/5] bg-zinc-900 flex items-center justify-center text-zinc-800 text-6xl relative">
-            <span className="absolute top-4 left-4 text-xs font-bold uppercase tracking-widest bg-white text-orange-500 px-3 py-1">
-              Futebol
-            </span>
-            <span>FOTO DA CAMISA</span>
-          </div>
-        </div>
+      <div className="max-w-md w-full">
+        <h1 className="text-5xl font-black uppercase text-orange-500 italic mb-2 leading-none">{produto.nome}</h1>
+        <p className="text-zinc-400 mb-8">{produto.descricao}</p>
 
-        {/* LADO DIREITO: Informações e Compra */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center">
-          
-          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-2">
-            Camisa de Futebol Oficial
-          </h1>
-          <p className="text-2xl font-bold mb-8 opacity-90">R$ 149,90</p>
-
-          <p className="text-lg opacity-80 mb-10">
-            Vista as cores da Alavanca. Camisa de alta performance, tecido respirável e corte atlético. Personalize com seu nome e número para dominar o jogo.
-          </p>
-
-          {/* SELEÇÃO DE TAMANHO */}
+        {/* --- SE FOR CAMISA: MOSTRA TAMANHOS --- */}
+        {produto.tipo === 'camisa' && (
           <div className="mb-8">
-            <p className="font-bold uppercase tracking-widest mb-3">Tamanho</p>
+            <p className="text-[10px] uppercase tracking-widest mb-3 text-zinc-500 font-black">Tamanho</p>
             <div className="flex gap-3">
-              {['P', 'M', 'G', 'GG'].map((size) => (
-                <button
-                  key={size}
-                  onClick={() => setTamanho(size)}
-                  className={`w-12 h-12 flex items-center justify-center font-bold uppercase transition-all border-2 
-                    ${tamanho === size 
-                      ? 'bg-white text-orange-500 border-white scale-110' // Selecionado: Branco
-                      : 'bg-transparent text-orange-500 border-orange-500 hover:bg-zinc-900' // Não selecionado: Vazado laranja
-                    }`}
+              {['PP', 'P', 'M', 'G', 'GG', 'XG'].map((t) => (
+                <button key={t} onClick={() => setTamanho(t)}
+                  className={`w-12 h-12 border-2 font-black transition-all ${tamanho === t ? 'bg-orange-500 border-orange-500 text-black' : 'border-zinc-800 hover:border-orange-500'}`}
                 >
-                  {size}
+                  {t}
                 </button>
               ))}
             </div>
           </div>
+        )}
 
-          {/* PERSONALIZAÇÃO (Inputs de texto) */}
-          <div className="mb-10 p-6 border border-zinc-800 bg-zinc-950">
-            <p className="font-bold uppercase tracking-widest mb-4">Personalização (Opcional)</p>
-            
-            <div className="flex flex-col gap-4">
-              <div>
-                <label className="block text-sm uppercase tracking-wider mb-1 opacity-80">Nome nas costas</label>
-                <input 
-                  type="text" 
-                  placeholder="Ex: ALAVANCA"
-                  value={nomePersonalizado}
-                  onChange={(e) => setNomePersonalizado(e.target.value)}
-                  className="w-full bg-black border border-orange-500 text-orange-500 p-3 focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder-orange-800/50 uppercase"
-                  maxLength={15}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm uppercase tracking-wider mb-1 opacity-80">Número</label>
-                <input 
-                  type="number" 
-                  placeholder="Ex: 10"
-                  value={numeroPersonalizado}
-                  onChange={(e) => setNumeroPersonalizado(e.target.value)}
-                  className="w-full bg-black border border-orange-500 text-orange-500 p-3 focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder-orange-800/50"
-                  min="0"
-                  max="99"
-                />
-              </div>
-            </div>
+        {/* --- SE FOR ACESSÓRIO: MOSTRA OPÇÕES DE KIT --- */}
+        {produto.tipo === 'acessorio' && produto.opcoes && (
+          <div className="mb-8 space-y-3">
+            <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-black">Escolha sua Opção</p>
+            {produto.opcoes.map((opcao) => (
+              <button key={opcao.label} onClick={() => setOpcaoSelecionada(opcao)}
+                className={`w-full p-4 border-2 text-left font-bold uppercase tracking-widest transition-all ${opcaoSelecionada?.label === opcao.label ? 'border-orange-500 bg-orange-500 text-black' : 'border-zinc-800 hover:border-zinc-700'}`}
+              >
+                <div className="flex justify-between">
+                  <span>{opcao.label}</span>
+                  <span>R$ {opcao.preco.toFixed(2)}</span>
+                </div>
+              </button>
+            ))}
           </div>
+        )}
 
-          {/* BOTÃO DE COMPRAR */}
-          <button 
-            onClick={adicionarAoCarrinho}
-            className="w-full bg-white text-orange-500 font-black uppercase tracking-widest py-5 hover:bg-gray-200 transition-all active:scale-95 text-xl"
-          >
-            Adicionar ao Carrinho
-          </button>
-
+        {/* --- PERSONALIZAÇÃO: NOME (Para Ambos) E NÚMERO (Só Camisa) --- */}
+        <div className="mb-8 space-y-4">
+          <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-black">Personalização</p>
+ {produto.tipo === 'camisa' && (          
+<input type="text" placeholder="NOME NA GRAVAÇÃO/ESTAMPA" value={nome}
+            onChange={(e) => setNumero(e.target.value.replace(/\D/g, ''))}
+              className="w-full bg-zinc-950 border-2 border-zinc-800 p-4 font-bold uppercase tracking-widest focus:border-orange-500 outline-none"
+          />
+)}
+          
+          {produto.tipo === 'camisa' && (
+            <input type="text" maxLength={2} placeholder="NÚMERO" value={numero}
+              onChange={(e) => setNumero(e.target.value.replace(/\D/g, ''))}
+              className="w-40 bg-zinc-950 border-2 border-zinc-800 p-4 font-bold uppercase tracking-widest focus:border-orange-500 outline-none"
+            />
+          )}
         </div>
+
+        <p className="text-5xl font-black mb-8 italic">R$ {precoFinal.toFixed(2).replace('.', ',')}</p>
+
+        <button 
+          onClick={() => {
+            adicionarAoCarrinho({
+              ...produto,
+              id: opcaoSelecionada ? `${produto.id}-${opcaoSelecionada.label}` : produto.id,
+              nome: opcaoSelecionada ? `${produto.nome} (${opcaoSelecionada.label})` : produto.nome,
+              preco: precoFinal,
+              tamanho: produto.tipo === 'camisa' ? tamanho : 'ÚNICO',
+              nomePersonalizado: nome || 'SEM NOME',
+              numeroPersonalizado: produto.tipo === 'camisa' ? (numero || '00') : 'N/A'
+            });
+            alert("ADICIONADO AO CARRINHO!");
+          }}
+          className="w-full bg-white text-black font-black uppercase py-6 tracking-[0.2em] hover:bg-orange-500 hover:text-white transition-all duration-300 shadow-lg"
+        >
+          Adicionar ao Carrinho
+        </button>
       </div>
     </main>
   );
